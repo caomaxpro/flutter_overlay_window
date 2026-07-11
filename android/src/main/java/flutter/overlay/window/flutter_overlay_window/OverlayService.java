@@ -405,6 +405,15 @@ public class OverlayService extends Service implements View.OnTouchListener {
                             || WindowSetup.gravity == (Gravity.BOTTOM | Gravity.RIGHT);
                     int xx = params.x + ((int) dx * (invertX ? -1 : 1));
                     int yy = params.y + ((int) dy * (invertY ? -1 : 1));
+                    int owW = flutterView.getWidth();
+                    int owH = flutterView.getHeight();
+                    windowManager.getDefaultDisplay().getSize(szWindow);
+                    int minX = invertX ? -(szWindow.x - owW) : 0;
+                    int maxX = invertX ? 0 : szWindow.x - owW;
+                    xx = Math.max(minX, Math.min(xx, maxX));
+                    int minY = invertY ? -(szWindow.y - owH) : statusBarHeightPx();
+                    int maxY = invertY ? 0 : szWindow.y - owH;
+                    yy = Math.max(minY, Math.min(yy, maxY));
                     params.x = xx;
                     params.y = yy;
                     if (windowManager != null) {
