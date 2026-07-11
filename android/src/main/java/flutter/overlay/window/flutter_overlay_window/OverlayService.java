@@ -67,6 +67,7 @@ public class OverlayService extends Service implements View.OnTouchListener {
     private float lastX, lastY;
     private int lastYPosition;
     private boolean dragging;
+    private boolean startedInDragZone;
     private static final float MAXIMUM_OPACITY_ALLOWED_FOR_S_AND_HIGHER = 0.8f;
     private Point szWindow = new Point();
     private Timer mTrayAnimationTimer;
@@ -139,7 +140,8 @@ public class OverlayService extends Service implements View.OnTouchListener {
                 int width = call.argument("width");
                 int height = call.argument("height");
                 boolean enableDrag = call.argument("enableDrag");
-                resizeOverlay(width, height, enableDrag, result);
+                int dragHandleHeight = call.argument("dragHandleHeight");
+                resizeOverlay(width, height, enableDrag, dragHandleHeight, result);
             }
         });
         overlayMessageChannel.setMessageHandler((message, reply) -> {
@@ -240,12 +242,13 @@ public class OverlayService extends Service implements View.OnTouchListener {
         }
     }
 
-    private void resizeOverlay(int width, int height, boolean enableDrag, MethodChannel.Result result) {
+    private void resizeOverlay(int width, int height, boolean enableDrag, int dragHandleHeight, MethodChannel.Result result) {
         if (windowManager != null) {
             WindowManager.LayoutParams params = (WindowManager.LayoutParams) flutterView.getLayoutParams();
             params.width = (width == -1999 || width == -1) ? -1 : dpToPx(width);
             params.height = (height != 1999 || height != -1) ? dpToPx(height) : height;
             WindowSetup.enableDrag = enableDrag;
+            WindowSetup.dragHandleHeight = dragHandleHeight;
             windowManager.updateViewLayout(flutterView, params);
             result.success(true);
         } else {
@@ -381,10 +384,12 @@ public class OverlayService extends Service implements View.OnTouchListener {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     dragging = false;
+                    startedInDragZone = WindowSetup.dragHandleHeight <= 0 || event.getY() <= WindowSetup.dragHandleHeight;
                     lastX = event.getRawX();
                     lastY = event.getRawY();
                     break;
                 case MotionEvent.ACTION_MOVE:
+                    if (!startedInDragZone) return false;
                     float dx = event.getRawX() - lastX;
                     float dy = event.getRawY() - lastY;
                     if (!dragging && dx * dx + dy * dy < 25) {
@@ -409,6 +414,7 @@ public class OverlayService extends Service implements View.OnTouchListener {
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
+                    if (!startedInDragZone) return false;
                     lastYPosition = params.y;
                     if (!WindowSetup.positionGravity.equals("none")) {
                         if (windowManager == null) return false;

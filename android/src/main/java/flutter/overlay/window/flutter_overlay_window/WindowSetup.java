@@ -20,6 +20,7 @@ public abstract class WindowSetup {
     static String positionGravity = "none";
     static int notificationVisibility = NotificationCompat.VISIBILITY_PRIVATE;
     static boolean enableDrag = false;
+    static int dragHandleHeight = 0;
 
 
     static void setNotificationVisibility(String name) {
