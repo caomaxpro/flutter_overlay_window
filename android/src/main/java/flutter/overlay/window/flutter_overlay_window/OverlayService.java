@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import io.flutter.embedding.android.FlutterSurfaceView;
 import io.flutter.embedding.android.FlutterTextureView;
 import io.flutter.embedding.android.FlutterView;
 import io.flutter.FlutterInjector;
@@ -122,7 +123,11 @@ public class OverlayService extends Service implements View.OnTouchListener {
         Log.d("onStartCommand", "Service started");
         FlutterEngine engine = FlutterEngineCache.getInstance().get(OverlayConstants.CACHED_TAG);
         engine.getLifecycleChannel().appIsResumed();
-        flutterView = new FlutterView(getApplicationContext(), new FlutterTextureView(getApplicationContext()));
+        if ("texture".equalsIgnoreCase(WindowSetup.renderType)) {
+            flutterView = new FlutterView(getApplicationContext(), new FlutterTextureView(getApplicationContext()));
+        } else {
+            flutterView = new FlutterView(getApplicationContext(), new FlutterSurfaceView(getApplicationContext()));
+        }
         flutterView.attachToFlutterEngine(FlutterEngineCache.getInstance().get(OverlayConstants.CACHED_TAG));
         flutterView.setFitsSystemWindows(true);
         flutterView.setFocusable(true);

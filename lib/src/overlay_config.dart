@@ -78,3 +78,20 @@ class WindowSize {
   /// even the statusbar and the navigationbar
   static const int fullCover = -1999;
 }
+
+/// Rendering backend for the overlay FlutterView.
+///
+/// - [surface] uses FlutterSurfaceView (default). Works reliably in overlay
+///   windows and fullscreen overlays. May not support transparency on all
+///   devices.
+///
+/// - [texture] uses FlutterTextureView. Supports transparency and is better
+///   suited for small floating icon overlays. May fail to render in fullscreen
+///   overlay windows on some devices.
+enum OverlayRenderType {
+  /// FlutterSurfaceView — reliable for fullscreen overlays.
+  surface,
+
+  /// FlutterTextureView — supports transparency, better for floating icons.
+  texture,
+}
