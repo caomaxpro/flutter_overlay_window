@@ -21,7 +21,7 @@ public abstract class WindowSetup {
     static int notificationVisibility = NotificationCompat.VISIBILITY_PRIVATE;
     static boolean enableDrag = false;
     static int dragHandleHeight = 0;
-    static String renderType = "surface";
+    static String renderType = "texture";
 
 
     static void setNotificationVisibility(String name) {
