@@ -53,6 +53,11 @@ enum OverlayFlag {
   /// Window flag: allow any pointer events outside of the window to be sent to the windows behind it.
   /// Usefull when you want to use fields that show keyboards.
   focusPointer,
+
+  /// Window flag: allow the overlay to receive focus and show the soft keyboard.
+  /// Uses FLAG_NOT_TOUCH_MODAL without FLAG_NOT_FOCUSABLE.
+  /// Use this when the overlay contains text input fields.
+  focusable,
 }
 
 /// The level of detail displayed in notifications on the lock screen.
