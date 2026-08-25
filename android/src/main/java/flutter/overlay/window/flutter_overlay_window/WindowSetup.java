@@ -10,21 +10,21 @@ import io.flutter.plugin.common.BasicMessageChannel;
 
 public abstract class WindowSetup {
 
-    static int height = WindowManager.LayoutParams.MATCH_PARENT;
-    static int width = WindowManager.LayoutParams.MATCH_PARENT;
-    static int flag = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-    static int gravity = Gravity.CENTER;
-    static BasicMessageChannel<Object> messenger = null;
-    static String overlayTitle = "Overlay is activated";
-    static String overlayContent = "Tap to edit settings or disable";
-    static String positionGravity = "none";
-    static int notificationVisibility = NotificationCompat.VISIBILITY_PRIVATE;
-    static boolean enableDrag = false;
-    static int dragHandleHeight = 0;
-    static String renderType = "texture";
+    public static int height = WindowManager.LayoutParams.MATCH_PARENT;
+    public static int width = WindowManager.LayoutParams.MATCH_PARENT;
+    public static int flag = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+    public static int gravity = Gravity.CENTER;
+    public static BasicMessageChannel<Object> messenger = null;
+    public static String overlayTitle = "Overlay is activated";
+    public static String overlayContent = "Tap to edit settings or disable";
+    public static String positionGravity = "none";
+    public static int notificationVisibility = NotificationCompat.VISIBILITY_PRIVATE;
+    public static boolean enableDrag = false;
+    public static int dragHandleHeight = 0;
+    public static String renderType = "texture";
 
 
-    static void setNotificationVisibility(String name) {
+    public static void setNotificationVisibility(String name) {
         if (name.equalsIgnoreCase("visibilityPublic")) {
             notificationVisibility = NotificationCompat.VISIBILITY_PUBLIC;
         }
@@ -36,7 +36,7 @@ public abstract class WindowSetup {
         }
     }
 
-    static void setFlag(String name) {
+    public static void setFlag(String name) {
         if (name.equalsIgnoreCase("flagNotFocusable") || name.equalsIgnoreCase("defaultFlag")) {
             flag = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         }
@@ -52,7 +52,7 @@ public abstract class WindowSetup {
         }
     }
 
-    static void showWhenLocked(String name) {
+    public static void showWhenLocked(String name) {
         if (name.equalsIgnoreCase("flagNotFocusable") || name.equalsIgnoreCase("defaultFlag")) {
             flag = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         }
@@ -68,7 +68,7 @@ public abstract class WindowSetup {
         }
     }
 
-    static void setGravityFromAlignment(String alignment) {
+    public static void setGravityFromAlignment(String alignment) {
         if (alignment.equalsIgnoreCase("topLeft")) {
             gravity = Gravity.TOP | Gravity.LEFT;
             return;
