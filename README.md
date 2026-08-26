@@ -20,6 +20,38 @@ Flutter plugin for displaying your Flutter app over other apps on the screen
 > **Forked from** [X-SLAYER/flutter_overlay_window](https://github.com/X-SLAYER/flutter_overlay_window)
 > Maintained by [caomaxpro](https://github.com/caomaxpro)
 
+## Branches
+
+| Branch | Description |
+|--------|-------------|
+| `main` | Base fork with keyboard focus fix and public fields. No auto plugin registration. |
+| `with-plugins` | **Recommended.** Auto-registers `SharedPreferencesPlugin` on the overlay engine via reflection. Required if your overlay Dart code uses `SharedPreferences` / `SharedPreferencesAsync`. |
+
+### Using the `with-plugins` branch
+
+```yaml
+dependencies:
+  flutter_overlay_window:
+    git:
+      url: https://github.com/caomaxpro/flutter_overlay_window.git
+      ref: with-plugins
+```
+
+### Maintenance notes
+
+The `with-plugins` branch adds reflection-based registration of `SharedPreferencesPlugin` in:
+- `OverlayService.java` — when a new engine is created (cache miss)
+- `FlutterOverlayWindowPlugin.java` — when the plugin attaches to activity
+
+This uses `Class.forName()` to find `io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin` at runtime. If the host app has `shared_preferences` in `pubspec.yaml`, the plugin is registered automatically. If not, it silently skips.
+
+**When updating the upstream fork** (`X-SLAYER/flutter_overlay_window`):
+1. Merge upstream changes into `main` first
+2. Rebase `with-plugins` on top of updated `main`
+3. The `registerSharedPreferencesPlugin()` method is small and self-contained — merge conflicts should be minimal
+
+---
+
 ## Preview
 
 | TrueCaller overlay example | click-through overlay example | Messanger chat-head example |

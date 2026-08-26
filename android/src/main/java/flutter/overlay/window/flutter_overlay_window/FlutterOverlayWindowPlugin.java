@@ -152,6 +152,10 @@ public class FlutterOverlayWindowPlugin implements
                     FlutterInjector.instance().flutterLoader().findAppBundlePath(),
                     "overlayMain");
             FlutterEngine engine = enn.createAndRunEngine(context, dEntry);
+
+            // Auto-register SharedPreferencesPlugin if available in host app.
+            registerSharedPreferencesPlugin(engine);
+
             FlutterEngineCache.getInstance().put(OverlayConstants.CACHED_TAG, engine);
         }
     }
@@ -193,6 +197,23 @@ public class FlutterOverlayWindowPlugin implements
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d("FlutterOverlayWindow", "onActivityResult fired: requestCode=" + requestCode + " resultCode=" + resultCode);
         return requestCode == REQUEST_CODE_FOR_OVERLAY_PERMISSION;
+    }
+
+    /**
+     * Auto-register SharedPreferencesPlugin on the overlay engine via reflection.
+     * This allows overlay Dart code to use SharedPreferences without compile-time dependency.
+     * Gracefully skips if shared_preferences is not available in the host app.
+     */
+    private void registerSharedPreferencesPlugin(FlutterEngine engine) {
+        try {
+            Class<?> pluginClass = Class.forName("io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin");
+            io.flutter.embedding.engine.plugins.FlutterPlugin plugin =
+                (io.flutter.embedding.engine.plugins.FlutterPlugin) pluginClass.newInstance();
+            engine.getPlugins().add(plugin);
+            Log.d("FlutterOverlayWindow", "Registered SharedPreferencesPlugin on overlay engine");
+        } catch (Exception e) {
+            Log.d("FlutterOverlayWindow", "SharedPreferencesPlugin not available, skipping: " + e.getMessage());
+        }
     }
 
 }

@@ -320,6 +320,10 @@ public class OverlayService extends Service implements View.OnTouchListener {
 
             flutterEngine = engineGroup.createAndRunEngine(this, entryPoint);
 
+            // Auto-register SharedPreferencesPlugin if available in host app.
+            // Uses reflection to avoid compile-time dependency on shared_preferences.
+            registerSharedPreferencesPlugin(flutterEngine);
+
             // Cache the created FlutterEngine for future use
             FlutterEngineCache.getInstance().put(OverlayConstants.CACHED_TAG, flutterEngine);
         }
@@ -487,5 +491,21 @@ public class OverlayService extends Service implements View.OnTouchListener {
         }
     }
 
+    /**
+     * Auto-register SharedPreferencesPlugin on the overlay engine via reflection.
+     * This allows overlay Dart code to use SharedPreferences without compile-time dependency.
+     * Gracefully skips if shared_preferences is not available in the host app.
+     */
+    private void registerSharedPreferencesPlugin(FlutterEngine engine) {
+        try {
+            Class<?> pluginClass = Class.forName("io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin");
+            io.flutter.embedding.engine.plugins.FlutterPlugin plugin =
+                (io.flutter.embedding.engine.plugins.FlutterPlugin) pluginClass.newInstance();
+            engine.getPlugins().add(plugin);
+            Log.d("OverlayService", "Registered SharedPreferencesPlugin on overlay engine");
+        } catch (Exception e) {
+            Log.d("OverlayService", "SharedPreferencesPlugin not available, skipping: " + e.getMessage());
+        }
+    }
 
 }
